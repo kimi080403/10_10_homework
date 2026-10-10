@@ -47,7 +47,11 @@ def build_grayscale(flat_pixels, height, width):
     # TODO A：将序列转换为数组，并重塑其形状。
     # 请删除下面的 raise NotImplementedError(...)，并在此处编写你的实现。
     # 请使用 return 返回函数要求的结果。
-    raise NotImplementedError("任务 A：请完成 build_grayscale()。")
+    # 将输入转换为一维 NumPy 数组，指定类型为 uint8
+    flat_array = np.array(flat_pixels, dtype=np.uint8)
+    # 使用 reshape 将其变成 (height, width) 的二维数组
+    result = flat_array.reshape((height, width))
+    return result
 
 
 def edit_pixel(gray, row, col, value):
@@ -77,7 +81,12 @@ def edit_pixel(gray, row, col, value):
     # TODO B：先复制数组，再通过二维索引修改指定像素的值。
     # 请删除下面的 raise NotImplementedError(...)，并在此处编写你的实现。
     # 请使用 return 返回函数要求的结果。
-    raise NotImplementedError("任务 B：请完成 edit_pixel()。")
+    # 1. 先复制一份原数组，避免修改原图
+    result = gray.copy()
+    # 2. 修改副本中指定坐标 (row, col) 的像素值
+    result[row, col] = value
+    # 3. 返回修改后的副本
+    return result
 
 
 def grayscale_to_rgb(gray):
@@ -108,7 +117,10 @@ def grayscale_to_rgb(gray):
     # TODO C：将三份灰度值沿最后一个轴组合，构建三个颜色通道。
     # 请删除下面的 raise NotImplementedError(...)，并在此处编写你的实现。
     # 请使用 return 返回函数要求的结果。
-    raise NotImplementedError("任务 C：请完成 grayscale_to_rgb()。")
+    # 使用 np.stack 在最后一个轴上叠加 3 份相同的灰度图
+    # 这会自动创建一个新的 (height, width, 3) 数组
+    result = np.stack((gray, gray, gray), axis=-1)
+    return result
 
 
 def adjust_brightness(image, offset):
@@ -131,7 +143,15 @@ def adjust_brightness(image, offset):
     # TODO D：先转换为有符号整数，再相加；限制数值范围后转换回原类型。
     # 请删除下面的 raise NotImplementedError(...)，并在此处编写你的实现。
     # 请使用 return 返回函数要求的结果。
-    raise NotImplementedError("任务 D：请完成 adjust_brightness()。")
+    # 1. 转换为有符号整数 (int16)，防止加法运算时溢出 (如 240+40 变成负数)
+    temp_image = image.astype(np.int16)
+    # 2. 加上亮度偏移量
+    temp_image = temp_image + offset
+    # 3. 将数值限制在 0 到 255 之间 (小于 0 变 0，大于 255 变 255)
+    temp_image = np.clip(temp_image, 0, 255)
+    # 4. 转换回原本的 uint8 类型
+    result = temp_image.astype(np.uint8)
+    return result
 
 
 def check_functions():
